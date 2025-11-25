@@ -14,12 +14,11 @@ class FloatingAssistantService : Service() {
     private lateinit var windowManager: WindowManager
     private lateinit var floatingView: View
     private lateinit var params: WindowManager.LayoutParams
-
+    
     private lateinit var collapsedView: View
     private lateinit var expandedView: View
     private lateinit var chatContainer: LinearLayout
     private lateinit var inputField: EditText
-
     private var isExpanded = false
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -28,11 +27,10 @@ class FloatingAssistantService : Service() {
         super.onCreate()
         floatingView = LayoutInflater.from(this).inflate(R.layout.floating_overlay, null)
 
-        val layoutFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val layoutFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        } else {
+        else
             WindowManager.LayoutParams.TYPE_PHONE
-        }
 
         params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
@@ -41,7 +39,6 @@ class FloatingAssistantService : Service() {
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         )
-
         params.gravity = Gravity.TOP or Gravity.START
         params.x = 0
         params.y = 100
@@ -75,7 +72,9 @@ class FloatingAssistantService : Service() {
                     MotionEvent.ACTION_UP -> {
                         val Xdiff = (event.rawX - initialTouchX).toInt()
                         val Ydiff = (event.rawY - initialTouchY).toInt()
-                        if (Xdiff < 10 && Ydiff < 10 && !isExpanded) expandView()
+                        if (Xdiff < 10 && Ydiff < 10) {
+                            if (!isExpanded) expandView()
+                        }
                         return true
                     }
                     MotionEvent.ACTION_MOVE -> {
@@ -101,8 +100,7 @@ class FloatingAssistantService : Service() {
 
         inputField.setOnTouchListener { v, event ->
             v.onTouchEvent(event)
-            params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+            params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
             windowManager.updateViewLayout(floatingView, params)
             true
         }
@@ -150,6 +148,7 @@ class FloatingAssistantService : Service() {
         collapsedView.visibility = View.GONE
         expandedView.visibility = View.VISIBLE
         isExpanded = true
+
         params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
         params.width = (resources.displayMetrics.widthPixels * 0.8).toInt()
         params.height = 800
@@ -160,6 +159,7 @@ class FloatingAssistantService : Service() {
         collapsedView.visibility = View.VISIBLE
         expandedView.visibility = View.GONE
         isExpanded = false
+
         params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
         params.width = WindowManager.LayoutParams.WRAP_CONTENT
         params.height = WindowManager.LayoutParams.WRAP_CONTENT
