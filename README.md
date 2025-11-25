@@ -1,20 +1,29 @@
 # SimpleRickAI
-```android/
+```
+Ai-simple-rick/
 ├── app/
 │   └── src/
 │       └── main/
 │           ├── java/
 │           │   └── com/
 │           │       └── simplerick/
-│           │           ├── MainActivity.kt                # Main app activity
-│           │           └── FloatingAssistantService.kt     # Overlay service
+│           │           ├── MainActivity.kt
+│           │           └── FloatingAssistantService.kt
 │           ├── res/
 │           │   ├── layout/
-│           │   │   ├── activity_main.xml                  # Main screen layout
-│           │   │   └── layout_floating_widget.xml         # Overlay widget layout
-│           │   └── drawable/
-│           │       └── placeholder.png                    # (Optional) image asset
+│           │   │   ├── activity_main.xml
+│           │   │   └── floating_overlay.xml
+│           │   ├── drawable/
+│           │   │   └── circle_background.xml
 │           │   └── values/
-│           │       └── strings.xml                        # App text resources
-│           └── AndroidManifest.xml                        # Android manifest
+│           │       └── strings.xml
+│           └── AndroidManifest.xml
+├── build.gradle               # Project-level Gradle (if using Gradle project)
+├── settings.gradle            # Gradle settings
+├── gradlew                    # Gradle wrapper script
+├── gradlew.bat                # Gradle wrapper Windows script
+└── gradle/
+    └── wrapper/
+        ├── gradle-wrapper.jar
+        └── gradle-wrapper.properties
 ```
