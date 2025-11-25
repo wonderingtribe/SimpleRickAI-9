@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     private fun startFloatingService() {
         val intent = Intent(this, FloatingAssistantService::class.java)
         startService(intent)
-        finish()
+        finish() // Close the main app so only the overlay remains
     }
 
     private fun checkOverlayPermission(): Boolean {
