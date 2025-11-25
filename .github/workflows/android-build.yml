@@ -2,7 +2,7 @@ name: Build APK
 
 on:
   push:
-    branches: [ "Master", "main" ]
+    branches: ["Master", "main"]
   pull_request:
 
 jobs:
@@ -10,23 +10,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: 17
+      - name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v4
 
-    - name: Install Gradle
-      uses: gradle/actions/setup-gradle@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
-    - name: Build APK with system Gradle
-      run: gradle assembleDebug
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: SimpleRickAI-debug.apk
-        path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Build APK (Debug)
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SimpleRickAI-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
