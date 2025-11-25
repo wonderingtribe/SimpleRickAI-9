@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <!-- COLLAPSED VIEW (Floating Icon) -->
+    <RelativeLayout
+        android:id="@+id/collapse_view"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@android:color/transparent"
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/circle_background"
+            android:padding="2dp"
+            android:src="@mipmap/ic_launcher_round" />
+
+        <!-- Online Indicator -->
+        <View
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:background="#00FF00" />
+    </RelativeLayout>
+
+    <!-- EXPANDED VIEW (Chat / Terminal) -->
+    <LinearLayout
+        android:id="@+id/expanded_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#1E1E1E"
+        android:elevation="8dp"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:visibility="gone">
+
+        <!-- Header -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#252526"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:fontFamily="monospace"
+                android:text="Simple Rick AI // Terminal"
+                android:textColor="#00FF00"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/close_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                app:tint="#FFFFFF"
+                xmlns:app="http://schemas.android.com/apk/res-auto"/>
+        </RelativeLayout>
+
+        <!-- Chat History -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:padding="4dp">
+
+            <LinearLayout
+                android:id="@+id/chat_history_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+
+        <!-- Input Area -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <EditText
+                android:id="@+id/input_query"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#333333"
+                android:fontFamily="monospace"
+                android:hint="Type code or query..."
+                android:maxLines="3"
+                android:padding="10dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#888888" />
+
+            <ImageView
+                android:id="@+id/send_btn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:src="@android:drawable/ic_menu_send"
+                app:tint="#00FF00"
+                xmlns:app="http://schemas.android.com/apk/res-auto"/>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
