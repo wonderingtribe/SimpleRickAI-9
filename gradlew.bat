@@ -1,8 +1,8 @@
-<<<<<<< HEAD
+       HEAD
 @echo off
 set DIRNAME=%~dp0
 "%DIRNAME%gradle\wrapper\gradle-wrapper.jar" %*
-=======
+
 @rem
 @rem Copyright 2015 the original author or authors.
 @rem
@@ -96,4 +96,5 @@ exit /b %EXIT_CODE%
 if "%OS%"=="Windows_NT" endlocal
 
 :omega
->>>>>>> b73b866 (Fix gradlew scripts)
+
+           b73b866 (Fix gradlew scripts)
