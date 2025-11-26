@@ -1,6 +1,0 @@
-rootProject.name = "Ai-simple-rick"
-include ':app'
-
-if (!gradle.gradleHomeDir?.exists()) {
-    println "⚠ Gradle wrapper not executable — falling back to system Gradle"
-}
