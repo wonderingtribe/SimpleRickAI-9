@@ -1,23 +1,31 @@
 # SimpleRickAI
 ```
 MyApp/
-├── AndroidManifest.xml       # App configuration, package name, activities, permissions
-├── res/                     # Resources
-│   ├── layout/              # XML layouts
-│   │   └── activity_main.xml
-│   ├── drawable/            # Images, icons
-│   │   └── ic_launcher.png
-│   └── values/              # Strings, colors, dimensions
-│       ├── strings.xml
-│       ├── colors.xml
-│       └── styles.xml
-├── src/                     # Java/Kotlin source code
-│   └── com/
-│       └── simpleerick/
-│           └── MainActivity.java
-├── assets/   └── FloatingAssistantService               # Optional: extra files packaged in APK
-├── libs/                    # Optional: external jars
-└── build/                   # Output folder for compiled classes/dex/APK
-
-    └── assets/   # optional
+├── build.gradle             # Project-level Gradle build file
+├── settings.gradle          # Gradle settings file
+├── app/
+│   ├── build.gradle         # App-module Gradle file
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/
+│   │       │   └── com/
+│   │       │       └── simplerick/
+│   │       │           ├── MainActivity.java
+│   │       │           └── FloatingAssistantService.java
+│   │       ├── res/
+│   │       │   ├── layout/
+│   │       │   │   └── activity_main.xml
+│   │       │   │   └── layout_floating_widget.xml
+│   │       │   ├── drawable/
+│   │       │   │   └── ic_launcher.png
+│   │       │   └── values/
+│   │       │       ├── strings.xml
+│   │       │       ├── colors.xml
+│   │       │       └── styles.xml
+│   │       ├── AndroidManifest.xml
+│   │       └── assets/      # Optional extra files
+│   │
+│   └── libs/                # Optional: external libraries
+│
+└── build/                   # Output directory, auto-created
 ```
