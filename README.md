@@ -1,29 +1,21 @@
 # SimpleRickAI
 ```
-Ai-simple-rick/
-├── app/
-│   └── src/
-│       └── main/
-│           ├── java/
-│           │   └── com/
-│           │       └── simplerick/
-│           │           ├── MainActivity.kt
-│           │           └── FloatingAssistantService.kt
-│           ├── res/
-│           │   ├── layout/
-│           │   │   ├── activity_main.xml
-│           │   │   └── floating_overlay.xml
-│           │   ├── drawable/
-│           │   │   └── circle_background.xml
-│           │   └── values/
-│           │       └── strings.xml
-│           └── AndroidManifest.xml
-├── build.gradle               # Project-level Gradle (if using Gradle project)
-├── settings.gradle            # Gradle settings
-├── gradlew                    # Gradle wrapper script
-├── gradlew.bat                # Gradle wrapper Windows script
-└── gradle/
-    └── wrapper/
-        ├── gradle-wrapper.jar
-        └── gradle-wrapper.properties
+MyApp/
+├── AndroidManifest.xml       # App configuration, package name, activities, permissions
+├── res/                     # Resources
+│   ├── layout/              # XML layouts
+│   │   └── activity_main.xml
+│   ├── drawable/            # Images, icons
+│   │   └── ic_launcher.png
+│   └── values/              # Strings, colors, dimensions
+│       ├── strings.xml
+│       ├── colors.xml
+│       └── styles.xml
+├── src/                     # Java/Kotlin source code
+│   └── com/
+│       └── simpleerick/
+│           └── MainActivity.java
+├── assets/                  # Optional: extra files packaged in APK
+├── libs/                    # Optional: external jars
+└── build/                   # Output folder for compiled classes/dex/APK
 ```
