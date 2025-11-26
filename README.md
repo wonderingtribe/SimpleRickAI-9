@@ -15,7 +15,9 @@ MyApp/
 │   └── com/
 │       └── simpleerick/
 │           └── MainActivity.java
-├── assets/                  # Optional: extra files packaged in APK
+├── assets/   └── FloatingAssistantService               # Optional: extra files packaged in APK
 ├── libs/                    # Optional: external jars
 └── build/                   # Output folder for compiled classes/dex/APK
+
+    └── assets/   # optional
 ```
