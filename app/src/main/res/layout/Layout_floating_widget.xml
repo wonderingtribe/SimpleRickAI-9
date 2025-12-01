@@ -1,325 +1,129 @@
-package com.simplerick.ai
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bubble_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
 
-import android.app.Service
-import android.content.Intent
-import android.graphics.PixelFormat
-import android.os.IBinder
-import android.view.*
-import android.widget.*
-import kotlinx.coroutines.*
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.IOException
+    <LinearLayout
+        android:id="@+id/header_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/chat_container"
+        android:background="@android:color/transparent"
+        android:padding="8dp">
 
-/**
- * Service that handles the floating chat head/bubble (Simple Rick).
- * It includes logic for dragging, collapsing, expanding, and making API calls to Gemini using OkHttp.
- */
-class FloatingAssistantService : Service(), View.OnTouchListener {
+        <ImageView
+            android:id="@+id/img_rick_head"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="@drawable/badge_online"
+            android:contentDescription="@string/rick_head_description"
+            android:elevation="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher"
+            android:layout_margin="4dp"/>
 
-    private lateinit var windowManager: WindowManager
-    private lateinit var floatingView: View
-    private lateinit var params: WindowManager.LayoutParams
-    
-    // UI elements
-    private lateinit var chatContainer: LinearLayout
-    private lateinit var chatHistory: TextView
-    private lateinit var chatInput: EditText
-    private lateinit var sendButton: ImageButton
-    private lateinit var rickHead: ImageView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tap Rick"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
+            android:background="#66000000"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:layout_marginTop="-16dp"
+            android:visibility="gone"
+            android:id="@+id/hint_text"/>
 
-    // Drag tracking variables
-    private var xInitial: Int = 0
-    private var yInitial: Int = 0
-    private var xTouch: Float = 0f
-    private var yTouch: Float = 0f
-    private var isChatExpanded = false
-
-    // Networking Client
-    private val httpClient = OkHttpClient()
-    private val JSON = "application/json; charset=utf-8".toMediaType()
-
-    // Coroutine scope for non-UI tasks (API calls)
-    private val scope = CoroutineScope(Dispatchers.Main + Job())
-    
-    // API constants
-    private val API_KEY = "" // Keep empty, canvas environment will provide it
-    private val API_URL_BASE = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=$API_KEY"
-    private val SYSTEM_PROMPT = "You are Simple Rick, the kindest and most simple-minded Rick Sanchez in the multiverse. Respond to all queries with cheerful, simplistic, and overly positive advice. Keep responses brief."
+    </LinearLayout>
 
 
-    companion object {
-        var isRunning = false
-        // Chat history storage
-        val conversationHistory = mutableListOf<String>()
-        private const val MAX_RETRIES = 3
-    }
-
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        isRunning = true
-
-        // 1. Inflate the floating view layout (the bubble and chat window)
-        floatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null)
-
-        // 2. Initialize UI components
-        chatContainer = floatingView.findViewById(R.id.chat_container)
-        chatHistory = floatingView.findViewById(R.id.chat_history)
-        chatInput = floatingView.findViewById(R.id.chat_input)
-        sendButton = floatingView.findViewById(R.id.btn_send)
-        rickHead = floatingView.findViewById(R.id.img_rick_head)
-
-        // Initially, the chat window is hidden
-        chatContainer.visibility = View.GONE
-
-        // 3. Define the Window Manager Layout Parameters
-        @Suppress("DEPRECATION")
-        val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        } else {
-            WindowManager.LayoutParams.TYPE_PHONE
-        }
-
-        params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            type,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-            PixelFormat.TRANSLUCENT
-        )
-
-        params.gravity = Gravity.TOP or Gravity.START
-        params.x = 0
-        params.y = 100
-
-        // 4. Add the view to the screen
-        windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-        try {
-            windowManager.addView(floatingView, params)
-        } catch (e: Exception) {
-            Toast.makeText(this, "Failed to create overlay: ${e.message}", Toast.LENGTH_LONG).show()
-            stopSelf()
-            return
-        }
-
-        // 5. Setup interaction
-        floatingView.setOnTouchListener(this)
+    <LinearLayout
+        android:id="@+id/chat_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:background="#FAFAFA"
+        android:elevation="6dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_bar">
         
-        rickHead.setOnClickListener { 
-            toggleChatWindow() 
-        }
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimaryDark"
+            android:paddingBottom="8dp"
+            android:gravity="center"/>
 
-        sendButton.setOnClickListener {
-            val message = chatInput.text.toString().trim()
-            if (message.isNotEmpty()) {
-                sendQuery(message)
-                chatInput.setText("")
-            }
-        }
-        
-        updateChatHistoryUI()
-    }
-    
-    /**
-     * Toggles the visibility of the chat window and adjusts layout parameters.
-     */
-    private fun toggleChatWindow() {
-        isChatExpanded = !isChatExpanded
+        <ScrollView
+            android:id="@+id/scroll_view_history"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:background="#FFFFFF"
+            android:padding="8dp"
+            android:layout_marginBottom="8dp"
+            android:fadingEdge="vertical"
+            android:scrollbars="vertical"
+            android:scrollbarThumbVertical="@android:color/darker_gray">
 
-        if (isChatExpanded) {
-            chatContainer.visibility = View.VISIBLE
-            
-            // Expand size to full width, controlled height
-            params.width = WindowManager.LayoutParams.MATCH_PARENT 
-            params.height = WindowManager.LayoutParams.WRAP_CONTENT 
-            
-            // Allow touch input to the window itself
-            params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-            
-            // Ensure focusability so the keyboard works
-            params.flags = params.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv() 
+            <TextView
+                android:id="@+id/chat_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:text="Rick: Welcome back, Morty! Ask me something simple and happy!" />
+        </ScrollView>
 
-            // Position at the bottom
-            params.gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-            params.y = 0 
-        } else {
-            chatContainer.visibility = View.GONE
-            
-            // Revert back to bubble size
-            params.width = WindowManager.LayoutParams.WRAP_CONTENT
-            params.height = WindowManager.LayoutParams.WRAP_CONTENT
-            
-            // Revert focusability to non-focusable, allowing interaction with apps underneath
-            params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            
-            // Position at the last recorded top/start position
-            params.gravity = Gravity.TOP or Gravity.START
-        }
+        <!-- Input Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="4dp"
+            android:background="@drawable/badge_online">
 
-        windowManager.updateViewLayout(floatingView, params)
-    }
-    
-    /**
-     * Handles touch events for dragging the bubble (only when collapsed).
-     */
-    override fun onTouch(v: View?, event: MotionEvent): Boolean {
-        if (isChatExpanded) {
-            return false 
-        }
-        
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                xInitial = params.x
-                yInitial = params.y
-                xTouch = event.rawX
-                yTouch = event.rawY
-                return true
-            }
-            MotionEvent.ACTION_MOVE -> {
-                params.x = xInitial + (event.rawX - xTouch).toInt()
-                params.y = yInitial + (event.rawY - yTouch).toInt()
-                windowManager.updateViewLayout(floatingView, params)
-                return true
-            }
-            MotionEvent.ACTION_UP -> {
-                val deltaX = event.rawX - xTouch
-                val deltaY = event.rawY - yTouch
-                val isClick = Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10
+            <EditText
+                android:id="@+id/chat_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Ask Simple Rick anything..."
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:background="@android:color/white"
+                android:padding="10dp"
+                android:inputType="text"
+                android:imeOptions="actionSend"
+                android:maxLines="4"/>
 
-                if (isClick) {
-                    rickHead.performClick()
-                }
-                return true
-            }
-        }
-        return false
-    }
-    
-    /**
-     * Sends the user query to the Gemini API with exponential backoff.
-     */
-    private fun sendQuery(query: String) = scope.launch(Dispatchers.IO) {
-        conversationHistory.add("You: $query")
-        withContext(Dispatchers.Main) { 
-            updateChatHistoryUI()
-            chatInput.hint = "Rick is thinking..." 
-            sendButton.isEnabled = false
-        }
+            <ImageButton
+                android:id="@+id/btn_send"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/badge_online"
+                android:src="@android:drawable/ic_menu_send"
+                android:contentDescription="Send Message"
+                android:tint="@android:color/white"/>
+        </LinearLayout>
 
-        try {
-            // Build the JSON payload
-            val payloadJson = buildApiPayload(query).toString()
-            
-            var attempt = 0
-            var geminiResponseText: String? = null
+    </LinearLayout>
 
-            while (attempt < MAX_RETRIES && geminiResponseText == null) {
-                try {
-                    val requestBody = payloadJson.toRequestBody(JSON)
-                    val request = Request.Builder()
-                        .url(API_URL_BASE)
-                        .post(requestBody)
-                        .build()
-
-                    httpClient.newCall(request).execute().use { response ->
-                        if (!response.isSuccessful) throw IOException("API call failed with code ${response.code}")
-
-                        val responseJson = JSONObject(response.body?.string() ?: "{}")
-                        
-                        // Extract text from the Gemini response structure
-                        val text = responseJson.optJSONArray("candidates")
-                            ?.optJSONObject(0)
-                            ?.optJSONObject("content")
-                            ?.optJSONArray("parts")
-                            ?.optJSONObject(0)
-                            ?.optString("text")
-
-                        if (text != null) {
-                            geminiResponseText = text
-                        } else {
-                            throw IOException("Response was successful but text content was missing.")
-                        }
-                    }
-                } catch (e: Exception) {
-                    attempt++
-                    if (attempt < MAX_RETRIES) {
-                        val delayTime = (1L shl attempt) * 1000L // 2s, 4s, 8s delay
-                        delay(delayTime)
-                        // Do not log retries as errors to console to adhere to silent backoff rule
-                    } else {
-                        throw e // Re-throw the final error
-                    }
-                }
-            }
-
-            val finalResponse = geminiResponseText ?: "Uh oh, Morty! The response was empty after all retries."
-            conversationHistory.add("Rick: $finalResponse")
-
-        } catch (e: Exception) {
-            conversationHistory.add("Rick: Oh gosh, Morty! I ran into a major error: ${e.localizedMessage}")
-        } finally {
-            withContext(Dispatchers.Main) {
-                updateChatHistoryUI()
-                chatInput.hint = "Ask Simple Rick anything..."
-                sendButton.isEnabled = true
-            }
-        }
-    }
-    
-    /**
-     * Constructs the standard Gemini API JSON payload.
-     */
-    private fun buildApiPayload(query: String): JSONObject {
-        // Build the contents array using the current query
-        val contentsArray = JSONArray().apply {
-            put(JSONObject().apply {
-                put("role", "user")
-                put("parts", JSONArray().apply {
-                    put(JSONObject().apply {
-                        put("text", query)
-                    })
-                })
-            })
-        }
-
-        return JSONObject().apply {
-            put("contents", contentsArray)
-            put("systemInstruction", JSONObject().apply {
-                put("parts", JSONArray().apply {
-                    put(JSONObject().apply {
-                        put("text", SYSTEM_PROMPT)
-                    })
-                })
-            })
-        }
-    }
-
-    /**
-     * Refreshes the chat history TextView with the current conversation and scrolls to bottom.
-     */
-    private fun updateChatHistoryUI() {
-        chatHistory.text = conversationHistory.joinToString("\n\n")
-        // Scroll to the bottom of the chat history
-        (chatHistory.parent as? ScrollView)?.post {
-            (chatHistory.parent as? ScrollView)?.fullScroll(View.FOCUS_DOWN)
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        isRunning = false
-        // Cancel all coroutines when the service is destroyed
-        scope.cancel() 
-        if (::floatingView.isInitialized && floatingView.isAttachedToWindow) {
-            windowManager.removeView(floatingView)
-        }
-        Toast.makeText(this, "Simple Rick AI dismissed.", Toast.LENGTH_SHORT).show()
-    }
-}
+</androidx.constraintlayout.widget.ConstraintLayout>
