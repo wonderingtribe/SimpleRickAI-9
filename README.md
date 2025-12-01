@@ -11,7 +11,7 @@ MyApp/
 │   └── src/
 │       └── main/
 │           ├── java/
-│           │   └── com/
+│ _app.jsx  |  └── com/
 │           │       └── simplerick/
 │           │           ├── MainActivity.kt         # Entry point for permission and service control
 │           │           └── FloatingAssistantService.kt # Core service for floating chat and API calls
