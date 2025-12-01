@@ -13,14 +13,3 @@ echo "Please ensure 'gradle/wrapper/gradle-wrapper.jar' exists."
 exit 1
 fi
 Define the Java command
-if [ -z "$JAVA_HOME" ]; then
-JAVA_CMD="java"
-else
-JAVA_CMD="$JAVA_HOME/bin/java"
-fi
-Execute the Gradle wrapper
-exec "$JAVA_CMD" 
--Dorg.gradle.appname="$APP_BASE_NAME" 
--Dgradle.user.home="$GRADLE_WRAPPER_HOME/.gradle" 
--cp "WRAPPER_JAR" \
-org.gradle.wrapper.GradleWrapperMain "@"
