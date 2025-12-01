@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Simple Rick AI</string>
+    <string name="rick_head_description">Floating icon for Simple Rick AI assistant</string>
+    <string name="start_rick_button">Start Simple Rick AI</string>
+    <string name="stop_rick_button">Stop Simple Rick AI</string>
+    <string name="main_activity_instructions">Tap START to enable the floating chat head. You will be asked to grant 'Display over other apps' permission. Tap the floating head to chat with Simple Rick!</string>
+</resources>
