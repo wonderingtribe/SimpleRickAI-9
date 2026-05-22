@@ -30,3 +30,28 @@ MyApp/
 │           └── AndroidManifest.xml               # Application permissions and component declarations
 └── build/                                          # Output directory (created by Gradle)
 ```
+
+
+``` engine/
+  core/
+    security/
+      gateway.py
+      analyzer.py
+      risk_scoring.py
+      self_learning.py
+      attacks/
+        prompt_injection.py
+        jailbreaks.py
+        poisoning.py
+      defenses/
+        sanitizers.py
+        anomaly_detector.py
+        policy_rules.py
+  infra/
+    logging/
+      security_logger.py
+    storage/
+      security_db.py
+config/
+  security.yaml
+```
